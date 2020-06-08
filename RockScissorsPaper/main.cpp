@@ -2,6 +2,7 @@
 #include<string>
 #include<ctime>
 #include<Windows.h>
+#include <conio.h>
 using namespace std;
 
 /* Macro definition for functions defining a program header */
@@ -9,6 +10,15 @@ using namespace std;
 
 /* Function prototype for console cleaning */
 inline void ClearConsoleLog(void);
+
+/* 'DIES_IRAE' (twitter: @DiesIra82600636 / github: Dies1rae) KEYB CLEANER */
+void clearKeyboardBuffer() 
+{
+	while (_kbhit()) 
+	{
+		_getche();
+	}
+}
 
 /* Random gesture generation for computer */
 int GenerateRandomSign(const int MIN_RANGE = 1, const int MAX_RANGE = 3)
@@ -31,11 +41,23 @@ MySign ms;
 /* The structure that stores the variables that are responsible for the players */
 struct Players
 {
-	int user = 0;
+	int user;
 	string username;
-	int computer = 0;
+	int computer;
+
+	Players() 
+	{
+		this->user = 0;
+		this->username = "";
+		this->computer = 0;
+	}
+
+	void SetUsername(string name) 
+	{
+		this->username = name;
+	}
 };
-Players players;
+Players* players = new Players();
 
 /* Drawing a table listing game gestures */
 void DrawTable(void)
@@ -108,18 +130,20 @@ void SelectWinner(int& user, int& computer, string* username)
 /* User information */
 void DrawInfoAboutUser(void)
 {
-	/* User data entry */
+	/* Ввод данных о пользователе */
 	cout << "Hey, what's your name?" << endl;
 	cout << "My name is ";
-	cin >> players.username;
+	string tmp_username;
+	cin >> tmp_username;
 
 	ClearConsoleLog();
-	cout << "You are welcome, " << players.username << "!\nEnjoy the game!" << endl;
+	players->SetUsername(tmp_username);
+	cout << "You are welcome, " << players->username << "!\nEnjoy the game!" << endl;
 	cout << endl;
 }
 
 /* Game data initialization */
-void Initialization(void)
+void Initialization()
 {
 	/* The choice of the beginning of the game or exit from the program */
 	cout << "You are ready to start the game?" << endl;
@@ -133,19 +157,22 @@ void Initialization(void)
 			ClearConsoleLog();
 
 			/* Player Turn */
-			players.user = 0;
+			players->user = 0;
+			/* 'DIES_IRAE' (twitter: @DiesIra82600636 / github: Dies1rae) KEYB CLEANER */
+			clearKeyboardBuffer();
+		
 			DrawTable();
 			cout << "Choose: ";
-			cin >> players.user;
-			UserThrow(players.user);
+			cin >> players->user;
+			UserThrow(players->user);
 
 			cout << endl;
 
 			/* Computer running */
-			players.computer = 0;
+			players->computer = 0;
 			DrawTable();
 			cout << "Computer choose: ";
-			ComputerThrow(players.computer);
+			ComputerThrow(players->computer);
 			break;
 		}
 		else if (GetAsyncKeyState(VK_F2) != 0)
@@ -161,7 +188,7 @@ void Initialization(void)
 	}
 
 	/* Selection of the winner according to the outcome of the game */
-	SelectWinner(players.user, players.computer, &players.username);
+	SelectWinner(players->user, players->computer, &players->username);
 }
 
 /* Program entry point */
