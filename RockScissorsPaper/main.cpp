@@ -8,6 +8,30 @@ using namespace std;
 /* Macro definition for functions defining a program header */
 #define SetCmdTitle SetConsoleTitleA
 
+/* Getting a standard output window (windows console) */
+HANDLE stdHNDL = GetStdHandle(STD_OUTPUT_HANDLE);
+
+/* Console colors */
+enum ConsoleColor
+{
+	COLOR_BLACK = 0,
+	COLOR_BLUE = 1,
+	COLOR_GREEN = 2,
+	COLOR_CYAN = 3,
+	COLOR_RED = 4,
+	COLOR_MAGENTA = 5,
+	COLOR_BROWN = 6,
+	COLOR_LIGHT_GRAY = 7,
+	COLOR_DARK_GRAY = 8,
+	COLOR_LIGHT_BLUE = 9,
+	COLOR_LIGHT_GREEN = 10,
+	COLOR_LIGHT_CYAN = 11,
+	COLOR_LIGHT_RED = 12,
+	COLOR_LIGHT_MAGENTA = 13,
+	COLOR_YELLOW = 14,
+	COLOR_WHITE = 15
+};
+
 /* Function prototype for console cleaning */
 inline void ClearConsoleLog(void);
 
@@ -24,8 +48,7 @@ void ClearKeyboardBuffer(void)
 int GenerateRandomSign(const int MIN_RANGE = 1, const int MAX_RANGE = 3)
 {
 	srand(static_cast<unsigned int>(time(NULL)));
-	int randomSign = ((rand() % MAX_RANGE) + MIN_RANGE);
-
+	int randomSign = (MIN_RANGE + rand() % (MAX_RANGE - MIN_RANGE + 1));
 	return randomSign;
 }
 
@@ -33,8 +56,8 @@ int GenerateRandomSign(const int MIN_RANGE = 1, const int MAX_RANGE = 3)
 struct MySign
 {
 	const string strRock = "ROCK!";
-	const string strPaper = "PAPER!";
 	const string strScissors = "SCISSORS!";
+	const string strPaper = "PAPER!";
 };
 MySign ms;
 
@@ -62,26 +85,30 @@ Players* players = new Players();
 /* Drawing a table listing game gestures */
 void DrawTable(void)
 {
+	SetConsoleTextAttribute(stdHNDL, COLOR_LIGHT_RED);
 	cout << "\t\t\t\t\t +-------------------------------+" << endl;
-	cout << "\t\t\t\t\t | 1.Rock | 2.Paper | 3.Scissors |" << endl;
+	cout << "\t\t\t\t\t | 1.Rock | 2.Scissors | 3.Paper |" << endl;
 	cout << "\t\t\t\t\t +-------------------------------+" << endl;
 }
 
 /* Player Turn */
 int UserThrow(int& user)
 {
+	SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+	cout << "You choose: ";
 	switch (user)
 	{
 	case 1:
-		cout << "You choose: " << ms.strRock << endl;
+		cout << ms.strRock << endl;
 		break;
 	case 2:
-		cout << "You choose: " << ms.strPaper << endl;
+		cout << ms.strScissors << endl;
 		break;
 	case 3:
-		cout << "You choose: " << ms.strScissors << endl;
+		cout << ms.strPaper << endl;
 		break;
 	default:
+		SetConsoleTextAttribute(stdHNDL, COLOR_RED);
 		cout << "Invalid sign!" << endl;
 		break;
 	}
@@ -99,12 +126,13 @@ int ComputerThrow(int& computer)
 		cout << ms.strRock << endl;
 		break;
 	case 2:
-		cout << ms.strPaper << endl;
-		break;
-	case 3:
 		cout << ms.strScissors << endl;
 		break;
+	case 3:
+		cout << ms.strPaper << endl;
+		break;
 	default:
+		SetConsoleTextAttribute(stdHNDL, COLOR_RED);
 		cout << "Invalid sign!" << endl;
 		break;
 	}
@@ -115,30 +143,37 @@ int ComputerThrow(int& computer)
 /* Winner selection */
 void SelectWinner(int& user, int& computer, string* username)
 {
-	if (user == computer)
-		cout << "\t\t\t\t\t\t DRAW!" << endl;
-	else if (user == 1 && computer == 3)
-		cout << "\t\t\t\t\t\t " << (*username) << " WIN!" << endl;
-	else if (user == 3 && computer == 2) 
-		cout << "\t\t\t\t\t\t " << (*username) << " WIN!" << endl;
-	else if (user == 2 && computer == 1) 
-		cout << "\t\t\t\t\t\t " << (*username) << " WIN!" << endl;
+	if (user == computer) 
+	{
+		SetConsoleTextAttribute(stdHNDL, COLOR_YELLOW);
+		cout << "\t\t\t\t\t\t\tDRAW!" << endl;
+	}
+	else if (user == 1 && computer == 2 || user == 2 && computer == 3 || user == 3 && computer == 1)
+	{
+		SetConsoleTextAttribute(stdHNDL, COLOR_LIGHT_GREEN);
+		cout << "\t\t\t\t\t\t   " << (*username) << " WIN!" << endl;
+	}
 	else 
-		cout << "\t\t\t\t\t\t Computer WINS!" << endl;
+	{
+		SetConsoleTextAttribute(stdHNDL, COLOR_LIGHT_MAGENTA);
+		cout << "\t\t\t\t\t\t    Computer WINS!" << endl;
+	}
 }
 
 /* User information */
 void DrawInfoAboutUser(void)
 {
 	/* Ввод данных о пользователе */
-	cout << "Hey, what's your name?" << endl;
-	cout << "My name is ";
+	SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+	cout << " Hey, what's your name?" << endl;
+	cout << " My name is ";
 	string tmp_username;
 	cin >> tmp_username;
 
 	ClearConsoleLog();
 	players->SetUsername(tmp_username);
-	cout << "You are welcome, " << players->username << "!\nEnjoy the game!" << endl;
+	SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+	cout << " You are welcome, " << tmp_username << "!\n Enjoy the game!" << endl;
 	cout << endl;
 }
 
@@ -146,8 +181,9 @@ void DrawInfoAboutUser(void)
 void Initialization()
 {
 	/* The choice of the beginning of the game or exit from the program */
-	cout << "Are you ready to start the game?" << endl;
-	cout << "Press 'F1' to start \nPress 'F2' to quit" << endl;
+	SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+	cout << " Are you ready to start the game?" << endl;
+	cout << " Press 'F1' to start \n Press 'F2' to quit" << endl;
 
 	for (/*int i = 0*/; /*i < 1*/; /*i++*/)
 	{
@@ -162,7 +198,8 @@ void Initialization()
 			ClearKeyboardBuffer();
 		
 			DrawTable();
-			cout << "Choose: ";
+			SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+			cout << " Choose: ";
 			cin >> players->user;
 			UserThrow(players->user);
 
@@ -171,7 +208,8 @@ void Initialization()
 			/* Computer running */
 			players->computer = 0;
 			DrawTable();
-			cout << "Computer choose: ";
+			SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+			cout << " Computer choose: ";
 			ComputerThrow(players->computer);
 			break;
 		}
@@ -181,7 +219,8 @@ void Initialization()
 			ClearConsoleLog();
 
 			/* Exit from the program */
-			cout << "Thank you for the game! \n See you later!" << endl;
+			SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+			cout << " Thank you for the game! \n See you later!" << endl;
 			exit(EXIT_SUCCESS);
 			break;
 		}
@@ -195,7 +234,7 @@ void Initialization()
 int main()
 {
 	/* Set the title for the window */
-	SetCmdTitle("ROCK - PAPER - SCISSORS");
+	SetCmdTitle("ROCK - SCISSORS - PAPER");
 
 	/* Initialization of all data and their processing */
 	DrawInfoAboutUser();
@@ -204,28 +243,45 @@ int main()
 	/* Choice for the user to continue / end the game */
 	while (true)
 	{
-		string choice;
 		cout << endl;
-		cout << "Do you wanna trying to play this game again?" << endl;
-		cout << "Yes \t No" << endl;
-		cout << "Your choice: ";
-		cin >> choice;
+		string userChoice;
+		SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+		cout << "\t\t\t\t    Do you wanna trying to play this game again?" << endl;
+		cout << "\t\t\t\t\t\t    Yes \t No" << endl;
+		cout << "\t\t\t\t\t\t     Your choice: ";
+		cin >> userChoice;
 
-		if (choice != "YES" && choice != "yes" && choice != "Yes")
+		while (userChoice == "Yes" || userChoice == "YES" || userChoice == "yes")
+		{
+			if (userChoice != "YES" && userChoice != "yes" && userChoice != "Yes")
+			{
+				/* Clear the screen from past data */
+				ClearConsoleLog();
+
+				/* Exit from the program */
+				SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+				cout << " Thank you for the game! \n See you later!" << endl;
+				exit(EXIT_SUCCESS);
+				break;
+			}
+			else
+			{
+				/* Clear the screen from past data */
+				ClearConsoleLog();
+				Initialization();
+				break;
+			}
+		}
+
+		if (userChoice != "YES" && userChoice != "yes" && userChoice != "Yes")
 		{
 			/* Clear the screen from past data */
 			ClearConsoleLog();
 
 			/* Exit from the program */
-			cout << "Thank you for the game! \n See you later!" << endl;
+			SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
+			cout << " Thank you for the game! \n See you later!" << endl;
 			exit(EXIT_SUCCESS);
-			break;
-		}
-		else
-		{
-			/* Clear the screen from past data */
-			ClearConsoleLog();
-			Initialization();
 			break;
 		}
 	}
