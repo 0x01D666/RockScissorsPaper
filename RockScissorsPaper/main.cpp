@@ -12,7 +12,7 @@ using namespace std;
 inline void ClearConsoleLog(void);
 
 /* 'DIES_IRAE' (twitter: @DiesIra82600636 / github: Dies1rae) KEYB CLEANER */
-void clearKeyboardBuffer() 
+void ClearKeyboardBuffer(void) 
 {
 	while (_kbhit()) 
 	{
@@ -159,7 +159,7 @@ void Initialization()
 			/* Player Turn */
 			players->user = 0;
 			/* 'DIES_IRAE' (twitter: @DiesIra82600636 / github: Dies1rae) KEYB CLEANER */
-			clearKeyboardBuffer();
+			ClearKeyboardBuffer();
 		
 			DrawTable();
 			cout << "Choose: ";
