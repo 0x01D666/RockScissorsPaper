@@ -146,7 +146,7 @@ void DrawInfoAboutUser(void)
 void Initialization()
 {
 	/* The choice of the beginning of the game or exit from the program */
-	cout << "You are ready to start the game?" << endl;
+	cout << "Are you ready to start the game?" << endl;
 	cout << "Press 'F1' to start \nPress 'F2' to quit" << endl;
 
 	for (/*int i = 0*/; /*i < 1*/; /*i++*/)
