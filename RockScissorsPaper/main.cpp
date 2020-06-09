@@ -95,7 +95,7 @@ void DrawTable(void)
 int UserThrow(int& user)
 {
 	SetConsoleTextAttribute(stdHNDL, COLOR_WHITE);
-	cout << "You choose: ";
+	cout << " You choose: ";
 	switch (user)
 	{
 	case 1:
